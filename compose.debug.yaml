@@ -1,0 +1,15 @@
+services:
+  snapps-dev-booru:
+    image: snapps-dev-booru
+    container_name: booru
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - dev-booru-data:/app
+    ports:
+      - 10000:8000
+    restart: unless-stopped
+
+volumes:
+  dev-booru-data:

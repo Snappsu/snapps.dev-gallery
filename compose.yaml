@@ -1,0 +1,12 @@
+services:
+  snapps-dev-booru:
+    image: snapps-dev-booru
+    container_name: booru
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - booru-data:/app
+
+volumes:
+  booru-data:
