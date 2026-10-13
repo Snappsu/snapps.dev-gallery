@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use function MicroHTML\{A, DIV, INPUT, LINK, META, P, TABLE, TD, TR, emptyHTML, joinHTML};
+use function MicroHTML\{SCRIPT};
 use function MicroHTML\BR;
 
 use MicroHTML\HTMLElement;
@@ -13,6 +14,34 @@ class ViewPostTheme extends Themelet
 {
     public function display_meta_headers(Post $image): void
     {
+
+        $color = 0;
+        $spoil = "false";
+        $filesize = $image->filesize / 1000;
+        $cw = "";
+        switch ($image->get_rating()) {
+            case 's':
+                $color = 9498624;
+                break;
+            case 'q':
+                $color = 15768576;
+                break;
+            case 'e':
+                $color = 15617336;
+                break;
+            default:
+                $color = 16761431;
+                $spoil = "true";
+                $cw  = "{
+      \"type\": 10,
+      \"content\": \"⚠️ - **unsavory content ahead! check the tags!**\"
+    },{
+      \"type\": 14,
+      \"divider\": true,
+      \"spacing\": 1
+    },";
+                // unrated
+        }
         $page = Ctx::$page;
         $h_metatags = str_replace(" ", ", ", $image->get_tag_list());
         $page->add_html_header(META(["name" => "keywords", "content" => $h_metatags]));
@@ -22,9 +51,42 @@ class ViewPostTheme extends Themelet
         $page->add_html_header(META(["property" => "og:url", "content" => make_link("post/view/{$image->id}")->asAbsolute()]));
         $page->add_html_header(META(["property" => "og:image:width", "content" => $image->width]));
         $page->add_html_header(META(["property" => "og:image:height", "content" => $image->height]));
+
         $page->add_html_header(META(["property" => "twitter:title", "content" => $h_metatags]));
         $page->add_html_header(META(["property" => "twitter:card", "content" => "summary_large_image"]));
         $page->add_html_header(META(["property" => "twitter:image:src", "content" => $image->get_media_link()->asAbsolute()]));
+
+        // CUSTOM IMAGE HEADER STUFF
+        $page->add_html_header(SCRIPT(["type" => 'application/json', "id" => "discord:component-embed"], \MicroHTML\rawHTML("
+            {
+  \"component\": {
+    \"type\": 17,
+    \"accent_color\": {$color},
+    \"components\": [{$cw}
+    {
+      \"type\": 12,
+      \"items\": [
+        {
+          \"media\": {
+            \"url\": \"{$image->get_media_link()->asAbsolute()}\"
+          },
+          \"spoiler\":$spoil
+        }
+      ]
+    },
+    {
+      \"type\": 14,
+      \"divider\": true,
+      \"spacing\": 1
+    },
+    {
+      \"type\": 10,
+      \"content\": \"## [snapps' gallery - post {$image->id}](https://gallery.snapps.dev/post/view/{$image->id})\\n{$image->get_description()}\\n\\n size: `{$filesize} kB`\\ndimensions: `{$image->width}px • {$image->height}px` \\nposted: `{$image->posted}`\\ntype: `{$image->mime}`\\ntags: `{$image->get_tag_list()}`\"
+    }
+  ]
+  }
+}
+")));
     }
 
     /**
