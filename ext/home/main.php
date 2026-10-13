@@ -28,7 +28,7 @@ final class Home extends Extension
         if (!empty(Ctx::$config->get(HomeConfig::LINKS))) {
             $main_links = Ctx::$config->get(HomeConfig::LINKS);
         } else {
-            $main_links = '[url=site://post/list]Posts[/url][url=site://comment/list]Comments[/url][url=site://tags]Tags[/url]';
+            $main_links = '[url=site://post/list]Posts[/url][url=site://tags]Tags[/url]';
             if (PoolsInfo::is_enabled()) {
                 $main_links .= '[url=site://pool/list]Pools[/url]';
             }
