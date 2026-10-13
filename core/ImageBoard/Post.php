@@ -40,7 +40,8 @@ final class Post implements \ArrayAccess
     public string $filename;
     #[Field]
     private string $ext;
-    private MimeType $mime;
+    public MimeType $mime;
+    public ?string $desc = null;
 
     /** @var list<tag-string>|null */
     public ?array $tag_array;
@@ -359,6 +360,40 @@ final class Post implements \ArrayAccess
         return $this->tag_array;
     }
 
+    /**
+     * Get this image's description as a string.
+     */
+    public function get_description(): string
+    {
+
+        $desc = Ctx::$database->get_col("
+                SELECT description
+                FROM image_descriptions
+                WHERE image_id=:id
+            ", ["id" => $this->id]);
+
+        if ($desc[0] == "None"||$desc[0] == null) {$desc[0]="[no description given]";}
+        $this->desc = $desc[0];
+        
+        return $this->desc;
+    }
+
+    /**
+     * Get this image's rating as a string.
+     */
+    public function get_rating(): string
+    {
+
+        $img_rating = Ctx::$database->get_col("
+                SELECT rating
+                FROM images
+                WHERE id=:id
+            ", ["id" => $this->id]);
+        $this->img_rating = $img_rating[0];
+        
+        return $this->img_rating;
+    }
+    
     /**
      * Get this image's tags as a string.
      */
