@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     volumes:
-      - dev-booru-data:/app
+      - dev-booru-data:/app/data
     ports:
       - 10000:8000
     restart: unless-stopped
