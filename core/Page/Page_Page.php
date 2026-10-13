@@ -350,7 +350,7 @@ trait Page_Page
                 ...$sub_block_html
             ),
             NAV(
-                ...$left_block_html
+                DIV(["id"=>"nav-blocks-cont"],...$left_block_html)
             ),
             ARTICLE(
                 $flash_html,
